@@ -10,6 +10,10 @@ const ShadowEffect = ({
         <Box
             sx={{
                 position: 'relative',
+                display:'flex'
+                ,justifyContent:'center'
+                ,alignItems:'center'
+                ,
                 ':after': {
                     content: '""',
                     position: 'absolute',

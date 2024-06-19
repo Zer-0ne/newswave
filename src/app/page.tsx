@@ -22,7 +22,8 @@ export default function Home() {
 				const { fetchNews, } = await import('@/slice/newsSlice')
 				dispatch(fetchNews({
 					action: "headline",
-					query: ''
+					query: '',
+					heading: ''
 				}))
 			} catch (error) {
 				console.log(error)
@@ -42,6 +43,7 @@ export default function Home() {
 export const LeftContainer = () => {
 	const { news } = useSelector((state: RootState) => state.news)
 	const [newsChannelsQuery, setNewsChannelsQuery] = useState<string | undefined>(undefined)
+	const [heading, setHeading] = useState<string>('')
 	const dispatch = useDispatch<AppDispatch>()
 	useEffect(() => {
 		const fetch = async () => {
@@ -56,7 +58,8 @@ export const LeftContainer = () => {
 				if (newsChannelsQuery) {
 					await dispatch(fetchNews({
 						action: 'source',
-						query: newsChannelsQuery
+						query: newsChannelsQuery,
+						heading
 					}));
 				}
 			} catch (error) {
@@ -66,7 +69,7 @@ export const LeftContainer = () => {
 
 		(newsChannelsQuery) && fetch()
 	}, [newsChannelsQuery])
-	
+
 	return <>
 		<Box
 			sx={{
@@ -121,7 +124,7 @@ export const LeftContainer = () => {
 							newsChannels.map((item, index) => (
 								<>
 									<Typography
-										onClick={() => setNewsChannelsQuery(item.id)}
+										onClick={() => { setNewsChannelsQuery(item.id); setHeading(item.name) }}
 										sx={{
 											p: .5,
 											...styles.hoverEffect,
@@ -140,14 +143,17 @@ export const LeftContainer = () => {
 }
 
 export const MainContainer = () => {
-	const { news, loading, error } = useSelector((state: RootState) => state.news)
+	const { news, loading, error, heading } = useSelector((state: RootState) => state.news)
 
+	console.log(heading)
 
 	return <>
 		<Container sx={{
 			flex: 3,
 			// maxWidth:'900px !important',
 			height: 'auto',
+			maxWidth: { xs: '100%' },
+			px: { xs: 0.5, md: 1 }
 			// bgcolor: 'red',
 		}}>
 			<Box>
@@ -167,15 +173,15 @@ export const MainContainer = () => {
 							, fontSize: 25,
 							fontWeight: '700'
 						}}
-					>Today's {' '}</Typography>
-					{'  '}Headlines
+					>{heading ? heading : 'Today\'s'} {' '}</Typography>
+					{'  '}{(heading === '') && "Headlines"}
 				</Typography>
 
 				{/* cards */}
 				<ShadowEffect>
 					<Box
 						sx={{
-							gap: 3,
+							gap: { md: 2, xs: 2 },
 							display: 'flex'
 							, justifyContent: 'center'
 							, alignItems: 'center'
@@ -190,7 +196,8 @@ export const MainContainer = () => {
 							(news as newArticles[])?.map((item, index) => (
 								<HeadlineCard key={index} data={item} />
 							))
-						) : (
+						) :
+							!loading &&
 							<Typography
 								sx={{
 									color: 'red',
@@ -200,7 +207,7 @@ export const MainContainer = () => {
 							>
 								No news found!
 							</Typography>
-						)}
+						}
 						{
 							error &&
 							<Typography

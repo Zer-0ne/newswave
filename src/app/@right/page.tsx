@@ -55,7 +55,8 @@ const RightContent = ({ title, query }: {
 
 			await dispatch(fetchNews({
 				action: 'query',
-				query: 'technology'
+				query: 'technology',
+				heading:'Technology'
 			}));
 
 		} catch (error) {

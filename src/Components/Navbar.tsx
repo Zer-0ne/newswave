@@ -32,8 +32,10 @@ const Navbar = () => {
                     sx={{
                         fontWeight: 900,
                         fontSize: 20,
-                        fontStyle: 'italic'
+                        fontStyle: 'italic',
+                        px:.2
                     }}
+                    className='gradient-text'
                 >
                     NewsWave
                 </Typography>
@@ -47,27 +49,28 @@ const Navbar = () => {
 
 const SearchBar = () => {
     const [query, setQuery] = useState<string | undefined>();
-    const { news } = useSelector((state: RootState) => state.news)
-    const [isEmpty, setIsEmpty] = useState(false)
-    const dispatch = useDispatch<AppDispatch>()
+    const { news } = useSelector((state: RootState) => state.news);
+    const [isEmpty, setIsEmpty] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
+    const dispatch = useDispatch<AppDispatch>();
+
     const fetch = async () => {
         try {
-            // If news exists, remove it first
-            const { fetchNews } = await import('@/slice/newsSlice')
-            // Then fetch new news
+            const { fetchNews } = await import('@/slice/newsSlice');
+
             if (query === '' || !query) {
-                setIsEmpty(true)
-                return
+                setIsEmpty(true);
+                return;
             }
             if (news) {
                 dispatch(removeNews());
             }
 
-
             if (query) {
                 await dispatch(fetchNews({
-                    action: (query == 'all') ? 'headline' : 'query',
-                    query: query
+                    action: (query === 'all') ? 'headline' : 'query',
+                    query: query,
+                    heading: query
                 }));
             }
         } catch (error) {
@@ -78,38 +81,51 @@ const SearchBar = () => {
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             if (query === '' || !query) {
-                setIsEmpty(true)
-                return
+                setIsEmpty(true);
+                return;
             }
             fetch();
         }
     };
 
-    return <>
+    return (
         <Box
             sx={{
                 padding: 1,
                 paddingX: 2,
                 background: colors.searchBarBg,
                 borderRadius: 2,
-                display: 'flex'
-                , position: { xs: 'absolute', md: 'static' },
+                display: 'flex',
+                position: { xs: 'absolute', md: 'relative' },
                 right: { xs: 10, md: 0 },
                 top: { xs: 100, md: 0 },
-                left: { xs: 10, md: 0 }
-                , justifyContent: 'space-between'
-                , alignItems: 'center',
-                border: (isEmpty) ? '1px solid red' : 'none'
+                left: { xs: 10, md: 0 },
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                border: (isEmpty) ? '1px solid red' : 'none',
+                ':before': {
+                    content: '""',
+                    position: 'absolute',
+                    inset:-2,
+                    borderRadius: 2.6,
+                    background: isFocused ? 'linear-gradient(270deg, #ff3300, #04ff00, #3700ff, #00e5ff, #ea00ff, #8400ff)' : 'none',
+                    backgroundSize: '600% 600%',
+                    animation: isFocused ? 'gradientBorder 3s ease infinite' : 'none',
+                    zIndex: -1
+                }
             }}
         >
             <input
                 placeholder='Search...'
-                onChange={(e) => { (query !== '') && setIsEmpty(false); setQuery(e.target.value as string) }}
+                onChange={(e) => { (query !== '') && setIsEmpty(false); setQuery(e.target.value as string); }}
                 onKeyPress={handleKeyPress}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 style={{
                     background: 'transparent',
                     outline: 'none',
-                    border: 'none', flex: 1
+                    border: 'none',
+                    flex: 1
                 }}
             />
             <SearchIcon
@@ -121,12 +137,16 @@ const SearchBar = () => {
                 }}
             />
         </Box>
-    </>
-}
+    );
+};
+
 
 const Categories = () => {
     const { news } = useSelector((state: RootState) => state.news)
-    const [query, setQuery] = useState<string | undefined>()
+    const [query, setQuery] = useState<{
+        query: string;
+        label: string
+    } | undefined>()
     const dispatch = useDispatch<AppDispatch>()
     useEffect(() => {
         const fetch = async () => {
@@ -141,8 +161,9 @@ const Categories = () => {
 
                 if (query) {
                     await dispatch(fetchNews({
-                        action: (query == 'all') ? 'headline' : 'query',
-                        query: query
+                        action: (query?.query == 'all') ? 'headline' : 'query',
+                        query: query?.query,
+                        heading: query?.label || ""
                     }));
                 }
             } catch (error) {
@@ -193,7 +214,7 @@ const Categories = () => {
                 {
                     categories.map((item, index) => (
                         <Typography
-                            onClick={() => setQuery(item.query)}
+                            onClick={() => { setQuery(item) }}
                             key={index}
                             style={{
                                 cursor: 'pointer',
