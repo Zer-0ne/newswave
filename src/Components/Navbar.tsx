@@ -48,7 +48,7 @@ const Navbar = () => {
 const SearchBar = () => {
     const [query, setQuery] = useState<string | undefined>();
     const { news } = useSelector((state: RootState) => state.news)
-    const [isEmpty, setIsEmpty] = useState(true)
+    const [isEmpty, setIsEmpty] = useState(false)
     const dispatch = useDispatch<AppDispatch>()
     const fetch = async () => {
         try {
@@ -77,6 +77,10 @@ const SearchBar = () => {
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
+            if (query === '') {
+                setIsEmpty(true)
+                return
+            }
             fetch();
         }
     };
@@ -94,7 +98,8 @@ const SearchBar = () => {
                 top: { xs: 100, md: 0 },
                 left: { xs: 10, md: 0 }
                 , justifyContent: 'space-between'
-                , alignItems: 'center'
+                , alignItems: 'center',
+                border: (isEmpty) ? '1px solid red' : 'none'
             }}
         >
             <input
@@ -104,7 +109,7 @@ const SearchBar = () => {
                 style={{
                     background: 'transparent',
                     outline: 'none',
-                    border: (isEmpty) ? '1px solid red' : 'none', flex: 1
+                    border: 'none', flex: 1
                 }}
             />
             <SearchIcon
