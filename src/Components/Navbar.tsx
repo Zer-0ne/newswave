@@ -54,15 +54,15 @@ const SearchBar = () => {
         try {
             // If news exists, remove it first
             const { fetchNews } = await import('@/slice/newsSlice')
-            if (news) {
-                dispatch(removeNews());
-            }
-
             // Then fetch new news
             if (query === '' || !query) {
                 setIsEmpty(true)
                 return
             }
+            if (news) {
+                dispatch(removeNews());
+            }
+
 
             if (query) {
                 await dispatch(fetchNews({
