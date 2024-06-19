@@ -59,7 +59,7 @@ const SearchBar = () => {
             }
 
             // Then fetch new news
-            if (query === '') {
+            if (query === '' || !query) {
                 setIsEmpty(true)
                 return
             }
@@ -77,7 +77,7 @@ const SearchBar = () => {
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            if (query === '') {
+            if (query === '' || !query) {
                 setIsEmpty(true)
                 return
             }

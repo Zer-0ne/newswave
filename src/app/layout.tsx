@@ -36,8 +36,8 @@ export default function RootLayout({
           <Box
             sx={{
               // bgcolor: 'red',
-              padding: 5,
-              px: 2,
+              padding: { md: 5, xs: 0 },
+              px: { md: 2, xs: 1 },
               paddingTop: { xs: 9, md: 5 },
               display: 'flex'
               , gap: 1,

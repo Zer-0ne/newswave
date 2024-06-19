@@ -1,8 +1,10 @@
 import { colors } from '@/utils/colors'
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { newArticles } from '@/utils/Interface';
+import { styles } from '@/utils/styles';
+import Link from 'next/link';
 
 const HeadlineCard = ({ data }: {
     data: newArticles
@@ -17,15 +19,46 @@ const HeadlineCard = ({ data }: {
         hour: '2-digit',
         minute: '2-digit'
     }).replace(',', '');
+
+    const [isIntersecting, setIsIntersecting] = useState(false);
+    const cardRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsIntersecting(entry.isIntersecting);
+            },
+            {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5 // Trigger when 50% of the card is visible
+            }
+        );
+
+        if (cardRef.current) {
+            observer.observe(cardRef.current);
+        }
+
+        return () => {
+            if (cardRef.current) {
+                observer.unobserve(cardRef.current);
+            }
+        };
+    }, []);
+    const matches = useMediaQuery('(min-width:600px)');
     return (
-        <>
+        <Link href={data.url} style={{ display: 'flex', width: matches ? '95%' : '100%' }}>
             <Box
+                ref={cardRef}
                 sx={{
-                    minWidth: '95%',
+                    minWidth: { md: '95%', xs: '99%' },
                     padding: 1,
+                    flex: 1,
                     position: 'relative',
                     boxShadow: '0 0 10px #80808054',
                     margin: 1,
+                    ...styles.hoverEffect,
+                    transform: isIntersecting ? 'scale(1)' : 'scale(0.9)',
                     borderRadius: 5,
                     overflow: 'hidden', // Ensures the image fits within the rounded corners
                     height: 'auto', // Adjust height automatically
@@ -124,7 +157,7 @@ const HeadlineCard = ({ data }: {
                     }}
                 >{data.title}</Typography>
             </Box>
-        </>
+        </Link>
     )
 }
 

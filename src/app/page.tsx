@@ -6,6 +6,7 @@ import { newsChannels } from "@/utils/constant";
 import { Box, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector, } from "react-redux";
+import { styles } from "@/utils/styles";
 import dynamic from 'next/dynamic'
 
 const HeadlineCard = dynamic(() => import('@/Components/HeadlineCard'))
@@ -65,6 +66,7 @@ export const LeftContainer = () => {
 
 		(newsChannelsQuery) && fetch()
 	}, [newsChannelsQuery])
+	
 	return <>
 		<Box
 			sx={{
@@ -78,7 +80,8 @@ export const LeftContainer = () => {
 		>
 			<Box
 				sx={{
-					p: 1,
+					p: { md: 1, xs: 0 },
+					py: { md: 0, xs: 1 },
 					display: 'block',
 					flex: 1
 				}}
@@ -108,7 +111,8 @@ export const LeftContainer = () => {
 
 					<Box
 						sx={{
-							p: 1,
+							p: { md: 1, xs: 0 },
+							py: { md: 0, xs: 1 },
 							maxHeight: '70vh'
 							, overflowY: 'scroll'
 						}}
@@ -120,6 +124,7 @@ export const LeftContainer = () => {
 										onClick={() => setNewsChannelsQuery(item.id)}
 										sx={{
 											p: .5,
+											...styles.hoverEffect,
 											cursor: 'pointer'
 										}} key={index} >{`${index + 1}.`} {" "}{item.name} </Typography>
 								</>
