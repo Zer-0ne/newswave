@@ -151,14 +151,19 @@ export const MainContainer = () => {
 	const totalPages = Math.ceil(totalItems / itemsPerPage);
 	const parentDivRef = useRef<HTMLDivElement>(null);
 
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [news])
+
+
 	const handlePageChange = async (page: number) => {
 		setCurrentPage(page);
 		if (parentDivRef.current) {
-            const firstChild = parentDivRef.current.firstChild as HTMLElement;
-            if (firstChild) {
-                firstChild.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to the top of the parent div
-            }
-        }
+			const firstChild = parentDivRef.current.firstChild as HTMLElement;
+			if (firstChild) {
+				firstChild.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to the top of the parent div
+			}
+		}
 	};
 
 	const renderPagination = () => {
