@@ -215,7 +215,7 @@ export const MainContainer = () => {
 							display: 'flex'
 							, justifyContent: 'center'
 							, alignItems: 'center'
-							,flexDirection:'column',
+							, flexWrap: 'wrap',
 							overflowY: 'scroll',
 							maxHeight: { md: '75vh', xs: '74vh' },
 						}}
@@ -258,6 +258,8 @@ export const MainContainer = () => {
 								, justifyContent: 'center'
 								, alignItems: 'center'
 								, gap: 2
+								, maxWidth: '100%',
+								minWidth: '70%'
 							}}
 						>
 							{renderPagination()}
