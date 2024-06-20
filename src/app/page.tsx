@@ -4,7 +4,7 @@ import { newArticles } from "@/utils/Interface";
 import { colors } from "@/utils/colors";
 import { newsChannels } from "@/utils/constant";
 import { Box, Container, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector, } from "react-redux";
 import { styles } from "@/utils/styles";
 import dynamic from 'next/dynamic'
@@ -149,9 +149,16 @@ export const MainContainer = () => {
 	const totalItems = news.length; // Total number of items
 
 	const totalPages = Math.ceil(totalItems / itemsPerPage);
+	const parentDivRef = useRef<HTMLDivElement>(null);
 
-	const handlePageChange = (page: number) => {
+	const handlePageChange = async (page: number) => {
 		setCurrentPage(page);
+		if (parentDivRef.current) {
+            const firstChild = parentDivRef.current.firstChild as HTMLElement;
+            if (firstChild) {
+                firstChild.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to the top of the parent div
+            }
+        }
 	};
 
 	const renderPagination = () => {
@@ -210,6 +217,7 @@ export const MainContainer = () => {
 				{/* cards */}
 				<ShadowEffect>
 					<Box
+						ref={parentDivRef}
 						sx={{
 							gap: { md: 2, xs: 2 },
 							display: 'flex'
