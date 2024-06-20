@@ -1,5 +1,9 @@
 export const categories = [
     {
+        label: 'Favorites'
+        , query: 'favorites'
+    },
+    {
         label: 'All News',
         query: 'all'
     },

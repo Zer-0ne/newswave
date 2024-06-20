@@ -1,14 +1,14 @@
-import { colors } from '@/utils/colors'
-import { Box, Typography, useMediaQuery } from '@mui/material'
-import Image from 'next/image'
-import React, { useEffect, useRef, useState } from 'react'
+import { colors } from '@/utils/colors';
+import { Box, Typography, useMediaQuery, IconButton } from '@mui/material';
+import Image from 'next/image';
+import React, { useEffect, useRef, useState } from 'react';
 import { newArticles } from '@/utils/Interface';
 import { styles } from '@/utils/styles';
 import Link from 'next/link';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
-const HeadlineCard = ({ data }: {
-    data: newArticles
-}) => {
+const HeadlineCard = ({ data }: { data: newArticles }) => {
     const dateTimeString = data.publishedAt;
     const dateTime = new Date(dateTimeString);
 
@@ -21,6 +21,7 @@ const HeadlineCard = ({ data }: {
     }).replace(',', '');
 
     const [isIntersecting, setIsIntersecting] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
     const cardRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -45,7 +46,30 @@ const HeadlineCard = ({ data }: {
             }
         };
     }, []);
+
+    useEffect(() => {
+        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        const isFav = favorites.some((article: newArticles) => article.url === data.url);
+        setIsFavorite(isFav);
+    }, [data.url]);
+
+    const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        if (isFavorite) {
+            const updatedFavorites = favorites.filter((article: newArticles) => article.url !== data.url);
+            localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+        } else {
+            favorites.push(data);
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
+        setIsFavorite(!isFavorite);
+    };
+
     const matches = useMediaQuery('(min-width:600px)');
+
     return (
         <Link href={data.url} style={{ display: 'flex', width: matches ? '95%' : 'auto'}}>
             <Box
@@ -86,7 +110,6 @@ const HeadlineCard = ({ data }: {
                             borderRadius: '13px'
                         }}
                     />
-
                 </Box>
 
                 <Box
@@ -94,9 +117,9 @@ const HeadlineCard = ({ data }: {
                         paddingTop: 2,
                         paddingX: 3,
                         marginX: 'auto',
-                        display: 'flex'
-                        , justifyContent: 'space-between'
-                        , alignItems: 'center',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                         flexWrap: 'wrap'
                     }}
                 >
@@ -109,8 +132,8 @@ const HeadlineCard = ({ data }: {
                                 textTransform: 'uppercase',
                                 padding: .5,
                                 paddingX: 2,
-                                bgcolor: colors.newsCompanyBg
-                                , color: colors.newsCompanyBtnColor,
+                                bgcolor: colors.newsCompanyBg,
+                                color: colors.newsCompanyBtnColor,
                                 borderRadius: 5,
                                 cursor: 'pointer',
                             }}
@@ -120,17 +143,17 @@ const HeadlineCard = ({ data }: {
                     <Box
                         sx={{
                             gap: 2,
-                            display: 'flex'
-                            , alignItems: 'center'
-                            , justifyContent: 'center'
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
                         }}
                     >
                         <Box
                             sx={{
                                 gap: 1,
-                                display: 'flex'
-                                , alignItems: 'center'
-                                , justifyContent: 'center'
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
                             }}
                         >
                             <Typography sx={{
@@ -141,10 +164,7 @@ const HeadlineCard = ({ data }: {
                                 {formattedDateTime}
                             </Typography>
                         </Box>
-
-
                     </Box>
-
                 </Box>
                 <Typography
                     variant='h3'
@@ -155,10 +175,22 @@ const HeadlineCard = ({ data }: {
                         paddingY: 1,
                         fontWeight: '700'
                     }}
-                >{data.title}</Typography>
+                >
+                    {data.title}
+                </Typography>
+                <IconButton
+                    onClick={handleFavoriteClick}
+                    sx={{ position: 'absolute', top: 8, right: 8 }}
+                >
+                    {isFavorite ? (
+                        <FavoriteIcon sx={{ color: 'red' }} />
+                    ) : (
+                        <FavoriteBorderIcon sx={{ color: 'red' }} />
+                    )}
+                </IconButton>
             </Box>
         </Link>
-    )
-}
+    );
+};
 
-export default HeadlineCard
+export default HeadlineCard;

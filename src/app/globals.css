@@ -22,6 +22,14 @@
   -webkit-text-fill-color: transparent;
   animation: gradientAnimation 8s ease infinite;
 }
+.fav {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(270deg, #ff3300, #04ff00, #3700ff, #00e5ff, #ea00ff, #8400ff);
+  background-size: 600% 600%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientAnimation 20s ease infinite;
+}
 
 @keyframes gradientAnimation {
   0% {

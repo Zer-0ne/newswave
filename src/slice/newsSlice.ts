@@ -3,7 +3,7 @@ import { Articles, newArticles } from "@/utils/Interface";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 
 type FetchNewsParams = {
-    action: 'headline' | 'query' | 'source';
+    action: 'headline' | 'query' | 'source' | 'favorites';
     query: string;
     heading: string;
 };
@@ -14,10 +14,16 @@ export const fetchNews = createAsyncThunk('session', async (params: FetchNewsPar
     const fetchData = {
         headline: await getHeadlines() as Articles,
         query: await newByKeyWords(query) as Articles,
-        source: await source(query) as Articles
+        source: await source(query) as Articles,
+        favorites: {
+            status: 'ok',
+            totalResult: 0,
+            articles: await JSON.parse(localStorage.getItem(query) || '[]') as newArticles[]
+        } as Articles
     };
 
     const news = fetchData[action];
+    console.log(news)
 
     if (!news) return {
         news: [],

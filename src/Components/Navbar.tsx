@@ -6,6 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { categories } from '@/utils/constant';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store/store';
+import { styles } from '@/utils/styles';
 import { removeNews } from '@/slice/newsSlice';
 
 const Navbar = () => {
@@ -142,42 +143,48 @@ const SearchBar = () => {
 
 
 const Categories = () => {
-    const { news } = useSelector((state: RootState) => state.news)
+    const { news } = useSelector((state: RootState) => state.news);
     const [query, setQuery] = useState<{
         query: string;
         label: string
-    } | undefined>()
-    const dispatch = useDispatch<AppDispatch>()
+    } | undefined>();
+    const dispatch = useDispatch<AppDispatch>();
+
     useEffect(() => {
         const fetch = async () => {
             try {
-                // If news exists, remove it first
-                const { fetchNews } = await import('@/slice/newsSlice')
+                const { fetchNews } = await import('@/slice/newsSlice');
                 if (news) {
                     dispatch(removeNews());
                 }
 
-                // Then fetch new news
-
                 if (query) {
-                    await dispatch(fetchNews({
-                        action: (query?.query == 'all') ? 'headline' : 'query',
-                        query: query?.query,
-                        heading: query?.label || ""
-                    }));
+                    if (query.query === 'favorites') {
+                        dispatch(fetchNews({
+                            action: 'favorites',
+                            query: 'favorites',
+                            heading: query.label || 'favorites'
+                        }));
+                    } else {
+                        await dispatch(fetchNews({
+                            action: (query.query === 'all') ? 'headline' : 'query',
+                            query: query.query,
+                            heading: query.label || ""
+                        }));
+                    }
                 }
             } catch (error) {
                 console.log(error);
             }
         };
 
-        (query) && fetch()
-    }, [query])
-    return <>
+        (query) && fetch();
+    }, [query]);
+
+    return (
         <Box
             sx={{
                 position: 'relative',
-                // bgcolor:'red',
                 ':after': {
                     content: '""',
                     position: 'absolute',
@@ -199,7 +206,6 @@ const Categories = () => {
                 maxWidth: { md: '60%', xs: '100%' },
             }}
         >
-
             <Box
                 sx={{
                     display: 'flex',
@@ -207,26 +213,26 @@ const Categories = () => {
                     gap: 3,
                     alignItems: 'self-start',
                     justifyContent: 'flex-start',
-                    // flex:3
                     paddingX: 2
                 }}
             >
-                {
-                    categories.map((item, index) => (
-                        <Typography
-                            onClick={() => { setQuery(item) }}
-                            key={index}
-                            style={{
-                                cursor: 'pointer',
-                                // flex:2,
-                                whiteSpace: 'nowrap',
-                                textTransform: 'capitalize'
-                            }}
-                        >{item.label}</Typography>
-                    ))
-                }
+                {categories.map((item, index) => (
+                    <Typography
+                        onClick={() => { setQuery(item); }}
+                        key={index}
+                        className={(item.query === 'favorites') ? 'fav' : ''}
+                        sx={{
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                            textTransform: 'capitalize',
+                        }}
+                    >
+                        {item.label}
+                    </Typography>
+                ))}
             </Box>
         </Box>
-    </>
-}
+    );
+};
+
 export default Navbar
