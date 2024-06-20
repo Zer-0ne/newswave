@@ -120,7 +120,7 @@ const RightContent = ({ title, query }: {
 			>
 				{
 					data &&
-					data.filter(article => article.title !== "[Removed]")?.map((item, index) => (
+					data.filter(article => article.title !== "[Removed]").filter(article => article.urlToImage !== null)?.map((item, index) => (
 						<NewsCard key={index} data={item} />
 					))
 				}
