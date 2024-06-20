@@ -25,7 +25,7 @@ export const fetchNews = createAsyncThunk('session', async (params: FetchNewsPar
     };
 
     return {
-        news: news.articles.filter(article => article.title !== "[Removed]").filter(article => article.urlToImage !== '') as newArticles[],
+        news: news.articles.filter(article => article.title !== "[Removed]").filter(article => article.urlToImage !== null) as newArticles[],
         heading
     };
 });

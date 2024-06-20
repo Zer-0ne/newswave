@@ -144,8 +144,38 @@ export const LeftContainer = () => {
 
 export const MainContainer = () => {
 	const { news, loading, error, heading } = useSelector((state: RootState) => state.news)
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 20; // Number of items per page
+	const totalItems = news.length; // Total number of items
 
-	console.log(heading)
+	const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+	};
+
+	const renderPagination = () => {
+		const pages = [];
+		for (let i = 1; i <= totalPages; i++) {
+			pages.push(
+				<button
+					key={i}
+					onClick={() => handlePageChange(i)}
+					style={{ fontWeight: currentPage === i ? 'bold' : 'normal' }}
+				>
+					{i}
+				</button>
+			);
+		}
+		return pages;
+	};
+
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+
+	// New array of items for demonstration
+
+	const paginatedItems = news.slice(startIndex, endIndex);
 
 	return <>
 		<Container sx={{
@@ -185,7 +215,7 @@ export const MainContainer = () => {
 							display: 'flex'
 							, justifyContent: 'center'
 							, alignItems: 'center'
-							, flexWrap: 'wrap',
+							,flexDirection:'column',
 							overflowY: 'scroll',
 							maxHeight: { md: '75vh', xs: '74vh' },
 						}}
@@ -193,7 +223,7 @@ export const MainContainer = () => {
 						{loading ? (
 							<Loading /> // Show loading indicator
 						) : news && news?.length ? (
-							(news as newArticles[])?.map((item, index) => (
+							(paginatedItems as newArticles[])?.map((item, index) => (
 								<HeadlineCard key={index} data={item} />
 							))
 						) :
@@ -220,6 +250,18 @@ export const MainContainer = () => {
 								Something went wrong!
 							</Typography>
 						}
+						<Box
+							sx={{
+								my: 2,
+								mb: 3,
+								display: 'flex'
+								, justifyContent: 'center'
+								, alignItems: 'center'
+								, gap: 2
+							}}
+						>
+							{renderPagination()}
+						</Box>
 					</Box>
 				</ShadowEffect>
 

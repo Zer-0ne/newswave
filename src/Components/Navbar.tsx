@@ -33,7 +33,7 @@ const Navbar = () => {
                         fontWeight: 900,
                         fontSize: 20,
                         fontStyle: 'italic',
-                        px:.2
+                        px: .2
                     }}
                     className='gradient-text'
                 >
@@ -69,7 +69,7 @@ const SearchBar = () => {
             if (query) {
                 await dispatch(fetchNews({
                     action: (query === 'all') ? 'headline' : 'query',
-                    query: query,
+                    query: encodeURIComponent(query),
                     heading: query
                 }));
             }
@@ -106,7 +106,7 @@ const SearchBar = () => {
                 ':before': {
                     content: '""',
                     position: 'absolute',
-                    inset:-2,
+                    inset: -2,
                     borderRadius: 2.6,
                     background: isFocused ? 'linear-gradient(270deg, #ff3300, #04ff00, #3700ff, #00e5ff, #ea00ff, #8400ff)' : 'none',
                     backgroundSize: '600% 600%',

@@ -47,11 +47,11 @@ const HeadlineCard = ({ data }: {
     }, []);
     const matches = useMediaQuery('(min-width:600px)');
     return (
-        <Link href={data.url} style={{ display: 'flex', width: matches ? '95%' : 'auto' }}>
+        <Link href={data.url} style={{ display: 'flex', width: matches ? '95%' : 'auto'}}>
             <Box
                 ref={cardRef}
                 sx={{
-                    minWidth: { md: '95%', xs: '99%' },
+                    minWidth: { md: '95%', xs: 'auto' },
                     padding: 1,
                     flex: 1,
                     position: 'relative',
